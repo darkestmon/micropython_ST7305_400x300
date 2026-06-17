@@ -5,17 +5,17 @@ FRAMERATE_8 = (0x39, 0x05) # (best quality) 0x39-LPM 0x05-HPM_16Hz_LPM_8Hz
 FRAMERATE_16 = (0x38, 0x05) # (best quality) 0x38-HPM 0x05-HPM_16Hz_LPM_8Hz
 FRAMERATE_32 = (0x38, 0x15) # (lower quality) 0x38-HPM 0x15-HPM_32Hz_LPM_8Hz
 
-class TFT42(framebuf.FrameBuffer):
-    """ 2.9inch, 384x168 framebuf """
+class RLCD42(framebuf.FrameBuffer):
+    """ 4.2inch, 400x300 framebuf """
     def __init__(self, spi, cs_pin, dc_pin, res_pin, te_pin = None, framerate = FRAMERATE_8):
         self.spi = spi
         self.cs = cs_pin
         self.dc = dc_pin
         self.rs = res_pin
-        # 384 * 21 bytes (each byte maps to 8 vertical pixels)
+        # 400 * 38 bytes (each byte maps to 8 vertical pixels)
         self.bs = bytearray(400 * 38)
         super().__init__(self.bs, 400, 38 * 8, framebuf.MONO_VLSB)
-        # 192 * 14 blocks (each block maps to 2 * 12 pixels)
+        # 200 * 26 blocks (each block maps to 2 * 12 pixels)
         self.bt = bytearray(200 * 26 * 3)
         # cache
         self.cmd = bytearray(1)
@@ -60,7 +60,7 @@ class TFT42(framebuf.FrameBuffer):
             (0xB4, [0x05, 0x46, 0x77, 0x77, 0x77, 0x77, 0x76, 0x45]), # Update Period Gate EQ Control in LPM
             (0x62, [0x32, 0x03, 0x1F]), # Gate Timing Control
             (0xB7, [0x13]), # Source EQ Enable
-            (0xB0, [0x80]), # Gate Line Setting: 384 line
+            (0xB0, [0x64]), # Gate Line Setting: 400 line
             
             (0x11, []), # Sleep out
             100, # delay 100ms
