@@ -16,6 +16,9 @@ This fork focuses specifically on the ST7305 4.2" 400×300 RLCD panel, with a fu
 - Minimal RAM usage after initialization
 
 ---
+![Demo](assets/rlcd-1.png)
+![Demo](assets/rlcd-2.png)
+---
 
 ## 📺 Supported Configuration (This Fork)
 
