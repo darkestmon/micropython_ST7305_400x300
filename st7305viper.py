@@ -5,7 +5,7 @@ FRAMERATE_8 = (0x39, 0x05) # (best quality) 0x39-LPM 0x05-HPM_16Hz_LPM_8Hz
 FRAMERATE_16 = (0x38, 0x05) # (best quality) 0x38-HPM 0x05-HPM_16Hz_LPM_8Hz
 FRAMERATE_32 = (0x38, 0x15) # (lower quality) 0x38-HPM 0x15-HPM_32Hz_LPM_8Hz
 
-class TFT29(framebuf.FrameBuffer):
+class TFT42(framebuf.FrameBuffer):
     """ 2.9inch, 384x168 framebuf """
     def __init__(self, spi, cs_pin, dc_pin, res_pin, te_pin = None, framerate = FRAMERATE_8):
         self.spi = spi
@@ -13,14 +13,14 @@ class TFT29(framebuf.FrameBuffer):
         self.dc = dc_pin
         self.rs = res_pin
         # 384 * 21 bytes (each byte maps to 8 vertical pixels)
-        self.bs = bytearray(384 * 21)
-        super().__init__(self.bs, 384, 21 * 8, framebuf.MONO_VLSB)
+        self.bs = bytearray(400 * 38)
+        super().__init__(self.bs, 400, 38 * 8, framebuf.MONO_VLSB)
         # 192 * 14 blocks (each block maps to 2 * 12 pixels)
-        self.bt = bytearray(192 * 14 * 3)
+        self.bt = bytearray(200 * 26 * 3)
         # cache
         self.cmd = bytearray(1)
-        self.caset = bytearray([0x17, 0x17 + 14 - 1])
-        self.raset = bytearray([0x00, 0x00 + 192 - 1])
+        self.caset = bytearray([0x12, 0x12 + 26 - 1])
+        self.raset = bytearray([0x00, 0x00 + 200 - 1])
         # start
         self._init(framerate)
     
@@ -60,7 +60,7 @@ class TFT29(framebuf.FrameBuffer):
             (0xB4, [0x05, 0x46, 0x77, 0x77, 0x77, 0x77, 0x76, 0x45]), # Update Period Gate EQ Control in LPM
             (0x62, [0x32, 0x03, 0x1F]), # Gate Timing Control
             (0xB7, [0x13]), # Source EQ Enable
-            (0xB0, [0x60]), # Gate Line Setting: 384 line
+            (0xB0, [0x80]), # Gate Line Setting: 384 line
             
             (0x11, []), # Sleep out
             100, # delay 100ms
@@ -89,12 +89,12 @@ class TFT29(framebuf.FrameBuffer):
         s = ptr8(self.bs)
         t = ptr8(self.bt)
         k = 0
-        for i in range(0, 384, 2):
+        for i in range(0, 400, 2):
             # convert 2 columns
-            for j in range(0, 21, 3):
+            for j in range(0, 38, 3):
                 for y in range(0, 3):
-                    b1 = s[(j + y) * 384 + i + 0]
-                    b2 = s[(j + y) * 384 + i + 1]
+                    b1 = s[(j + y) * 400 + i + 0]
+                    b2 = s[(j + y) * 400 + i + 1]
                     mix = 0x00
                     mix=mix|((b1&0x01)<<7)
                     mix=mix|((b2&0x01)<<6)
